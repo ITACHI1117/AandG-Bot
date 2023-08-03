@@ -1,4 +1,6 @@
 import time
+
+from Niid_Correction import correct_regNoNiid
 from main import correct_regNo
 from typing import Final
 from telegram import Update
@@ -25,11 +27,11 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Lets us use the /Reg Number Correction
 async def regcorrection_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        'Send the policy number and the Correct Reg number\n \nMake sure the Policy number '
+        'Send the policy number the Correct Reg number and the incorrect reg number\n \nMake sure the Policy number '
         'and reg Number are correct\nWrite The policy and Reg Number in this format👇')
     # time.sleep(1)
     await update.message.reply_text(
-        'examplepolicynumber,exampleregnumber')
+        'examplepolicynumber,exampleregnumber,exampleincorrectregnumber')
 
 
 
@@ -46,9 +48,9 @@ def handle_response(text: str) -> str:
     if 'i love python' in processed:
         return 'Remember to subscribe!'
 
-    if f"{text},{text}":
-        Working = True
+    if f"{text},{text},{text}":
         return 'Working on it'
+
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -63,14 +65,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     POLICY_INFO = text.split(",")
     POLICY_NUMBER = POLICY_INFO[0]
     REG_NUMBER = POLICY_INFO[1]
+    INCORRECT_REGNUMBER = POLICY_INFO[2]
     print(POLICY_INFO)
     print(POLICY_NUMBER)
     print(REG_NUMBER)
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
 
         correct_regNo(POLICY_NUMBER,REG_NUMBER)
-        await context.bot.send_message(chat_id=chat_id, text='Done✅')
-
+        await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
+        time.sleep(2)
+        correct_regNoNiid(POLICY_NUMBER,REG_NUMBER,INCORRECT_REGNUMBER)
+        await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
+        time.sleep(2)
+        await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
          await context.bot.send_message(chat_id=chat_id, text='There was an error')
 

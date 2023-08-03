@@ -1,20 +1,21 @@
 # Import the required modules
+import selenium.webdriver.common.alert
 from selenium import webdriver
 import time
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.wait import WebDriverWait
 
 
 # Main Function
-def correct_regNoNiid():
+def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
     # Provide the email and password
     email = 'mayowaa'
     password = 'Lovely1'
+    comapny_email = 'info@aginsuranceplc.com'
 
     # Provide policy number
-    policy = 'P/AG/PMI/23/TPC/2582669'#policy_number
-    incorrect_regNo = 'WER758JZ1'#reg_number
+    policy = policy_number  # policy_number
+    correct_regNo = reg_number
+    incorrect_regNo = incorrect_regnumber  # reg_number
 
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")
@@ -38,40 +39,94 @@ def correct_regNoNiid():
     keycode = driver.find_element(by="xpath",
                                   value='//input[@class="riTextBox riEnabled Textbox_Large"]')
     keycode.send_keys(password)
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     # Find the Login button and click on it.
     driver.find_element(by="xpath", value='//div[@id="MainContent_UpdatePanel1"]/table/tbody/tr[7]/td/a/input').click()
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     # Find the Request(Endorsements) link and click on it.
     driver.find_element(by="xpath", value='//form/table/tbody/tr[7]/td['
                                           '2]/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr/td/div/div/table'
                                           '/tbody/tr[2]/td[2]/div/div/table/tbody/tr[2]/td['
                                           '2]/table/tbody/tr/td/table/tbody/tr/td[2]/a').click()
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     # Find the Motor Vehicle Endorsement link and click on it.
     driver.find_element(by="xpath", value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table'
                                           '/tbody/tr/td/div/div/table/tbody/tr[2]/td['
                                           '2]/div/div/table/tbody/tr/td/table/tbody/tr/td[3]/a').click()
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     # Entering the Policy number
-    policy_number = driver.find_element(by="xpath",
+    policy_Number = driver.find_element(by="xpath",
                                         value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[4]/td[2]/span/input')
-    policy_number.send_keys(policy)
+    policy_Number.send_keys(policy)
     time.sleep(0.5)
 
-    #Entering the incorrect Reg number
+    # Entering the incorrect Reg number
     reg_No = driver.find_element(by="xpath",
                                  value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[5]/td[2]/span/input')
     reg_No.send_keys(incorrect_regNo)
     time.sleep(0.5)
 
-    driver.find_element(by="xpath", value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[6]/td/span/input').click()
-    time.sleep(50)
+    # Finding the search Button and clicking on it
+    driver.find_element(by="xpath",
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[6]/td/span/input').click()
+    time.sleep(0.5)
+
+    # Identify the email text box
+    email_txt = driver.find_element(by="xpath", value="//form/table/tbody/tr[7]/td["
+                                                      "2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[12]/td["
+                                                      "2]/input")
+
+    # Fetch the value property of the email
+    value_info = email_txt.get_attribute("value")
+    print(value_info)
+
+    # Changing the value property of the email if it does not contain '@'
+    if '@' in value_info:
+        print("Email is verified")
+    else:
+        print("Invalid email")
+        driver.find_element(by="xpath", value="//form/table/tbody/tr[7]/td["
+                                              "2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[12]/td["
+                                              "2]/input").clear()
+        new_email = driver.find_element(by="xpath",
+                                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table'
+                                              '/tbody/tr[12]/td[2]/input')
+        new_email.send_keys(comapny_email)
+        time.sleep(1.5)
+
+    # Editing the Licence Number
+    driver.find_element(by="xpath",
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[14]/td[2]/input').clear()
+    time.sleep(0.5)
+    driver.find_element(by="xpath",
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[14]/td[2]/input').send_keys(
+        correct_regNo)
+    time.sleep(0.5)
+
+    # Editing the Old Licence Number
+    driver.find_element(by="xpath",
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[15]/td[2]/input').clear()
+    time.sleep(0.5)
+    driver.find_element(by="xpath",
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[15]/td[2]/input').send_keys(
+        correct_regNo)
 
 
+    # Finding the change button and clicking on it
+    driver.find_element(by="xpath",
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[30]/td/span/input').click()
+    time.sleep(1)
 
-correct_regNoNiid()
+    # Checking for the alert and clicking on it
+    alert = driver.switch_to.alert
+    alert.accept()
+
+    time.sleep(1)
+
+    # closing the Page
+    driver.close()
+    driver.quit()

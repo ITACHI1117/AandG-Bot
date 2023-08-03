@@ -5,6 +5,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 
+from Niid_Correction import correct_regNoNiid
+
 
 # Main Function
 def correct_regNo(policy_number, reg_number):
@@ -114,16 +116,7 @@ def correct_regNo(policy_number, reg_number):
         if cssValue == 'none':
             print("done waiting")
 
-    Done = True
-    print("Done✅")
-
-
     # Quits the driver
     driver.close()
     driver.quit()
 
-    return Done
-
-
-# if correct_regNo(Done=True):
-#     print("program Executed")
