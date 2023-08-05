@@ -1,9 +1,7 @@
 # Import the required modules
-import selenium.webdriver.common.alert
 from selenium import webdriver
 import time
 from selenium.webdriver.chrome.service import Service
-
 
 # Main Function
 def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
@@ -22,7 +20,7 @@ def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
     options.add_argument('--log-level=3')
 
     # Provide the path of chromedriver present on your system.
-    path = "C:/Users/itachi/Documents/chromedriver-win64"
+    path = "chromedriver-win64.exe"
     service = Service(executable_path=path)
     driver = webdriver.Chrome(options=options, service=service)
     # driver.set_window_size(1920, 1080)
@@ -60,20 +58,24 @@ def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
 
     # Entering the Policy number
     policy_Number = driver.find_element(by="xpath",
-                                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[4]/td[2]/span/input')
+                                        value='//form/table/tbody/tr[7]/td['
+                                              '2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[4]/td['
+                                              '2]/span/input')
     policy_Number.send_keys(policy)
     time.sleep(0.5)
 
     # Entering the incorrect Reg number
     reg_No = driver.find_element(by="xpath",
-                                 value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[5]/td[2]/span/input')
+                                 value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table'
+                                       '/tbody/tr[5]/td[2]/span/input')
     reg_No.send_keys(incorrect_regNo)
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     # Finding the search Button and clicking on it
     driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[6]/td/span/input').click()
-    time.sleep(0.5)
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
+                              '6]/td/span/input').click()
+    time.sleep(1.5)
 
     # Identify the email text box
     email_txt = driver.find_element(by="xpath", value="//form/table/tbody/tr[7]/td["
@@ -100,25 +102,30 @@ def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
 
     # Editing the Licence Number
     driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[14]/td[2]/input').clear()
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
+                              '14]/td[2]/input').clear()
     time.sleep(0.5)
     driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[14]/td[2]/input').send_keys(
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
+                              '14]/td[2]/input').send_keys(
         correct_regNo)
     time.sleep(0.5)
 
     # Editing the Old Licence Number
     driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[15]/td[2]/input').clear()
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
+                              '15]/td[2]/input').clear()
     time.sleep(0.5)
     driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[15]/td[2]/input').send_keys(
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
+                              '15]/td[2]/input').send_keys(
         correct_regNo)
 
 
     # Finding the change button and clicking on it
     driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[30]/td/span/input').click()
+                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
+                              '30]/td/span/input').click()
     time.sleep(1)
 
     # Checking for the alert and clicking on it

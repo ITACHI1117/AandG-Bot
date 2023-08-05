@@ -1,5 +1,4 @@
 import time
-
 from Niid_Correction import correct_regNoNiid
 from main import correct_regNo
 from typing import Final
@@ -11,6 +10,7 @@ BOT_USERNAME: Final = '@A_and_G_bot'
 POLICY = ""
 REG = ""
 Working = False
+
 print('Starting up bot...')
 
 
@@ -27,8 +27,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Lets us use the /Reg Number Correction
 async def regcorrection_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        'Send the policy number the Correct Reg number and the incorrect reg number\n \nMake sure the Policy number '
-        'and reg Number are correct\nWrite The policy and Reg Number in this format👇')
+        'Send the policy number the Correct Reg number and the incorrect reg number\n \nPlease make sure the '
+        'information you provide is correct\nWrite The policy and Reg Number in this format👇')
     # time.sleep(1)
     await update.message.reply_text(
         'examplepolicynumber,exampleregnumber,exampleincorrectregnumber')
@@ -48,9 +48,9 @@ def handle_response(text: str) -> str:
     if 'i love python' in processed:
         return 'Remember to subscribe!'
 
-    if f"{text},{text},{text}":
-        return 'Working on it'
+    if f"/regcorrection":
 
+        return 'Working on it👨‍💻'
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -69,21 +69,23 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(POLICY_INFO)
     print(POLICY_NUMBER)
     print(REG_NUMBER)
+
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
 
-        correct_regNo(POLICY_NUMBER,REG_NUMBER)
+        correct_regNo(POLICY_NUMBER, REG_NUMBER)
         await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
-        time.sleep(2)
-        correct_regNoNiid(POLICY_NUMBER,REG_NUMBER,INCORRECT_REGNUMBER)
+        time.sleep(0.5)
+        correct_regNoNiid(POLICY_NUMBER, REG_NUMBER, INCORRECT_REGNUMBER)
         await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
-        time.sleep(2)
+        time.sleep(0.5)
         await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
+        print('Done✅')
+
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-         await context.bot.send_message(chat_id=chat_id, text='There was an error')
+        await context.bot.send_message(chat_id=chat_id, text='There was an error')
 
     job_queue.run_once(callback_30, 2)
     app.add_error_handler(error)
-
 
     # React to group messages only if users mention the bot directly
     if message_type == 'group':
@@ -102,11 +104,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(response)
 
 
-
 # Log errors
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
-
 
 
 # Run the program
@@ -130,3 +130,6 @@ if __name__ == '__main__':
     print('Polling...')
     # Run the bot
     app.run_polling(poll_interval=5)
+
+
+

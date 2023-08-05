@@ -19,11 +19,12 @@ def correct_regNo(policy_number, reg_number):
     correct_regNo = reg_number
 
     options = webdriver.ChromeOptions()
+    # options.add_argument("--headless")
     options.add_argument("--start-maximized")
     options.add_argument('--log-level=3')
 
     # Provide the path of chromedriver present on your system.
-    path = "C:/Users/itachi/Documents/chromedriver-win64"
+    path = "chromedriver-win64.exe"
     service = Service(executable_path=path)
     driver = webdriver.Chrome(options=options, service=service)
     # driver.set_window_size(1920, 1080)
@@ -56,25 +57,30 @@ def correct_regNo(policy_number, reg_number):
 
     # Find the Search by option and click on it.
     driver.find_element(by="xpath",
-                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[3]/div/select').click()
+                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
+                              '3]/div/select').click()
     time.sleep(0.5)
 
     # Find the fetch by policy button and click on it.
     driver.find_element(by="xpath",
-                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[3]/div/select/option[2]').click()
+                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
+                              '3]/div/select/option[2]').click()
     time.sleep(0.5)
+
+    #Check if the error box showed up and print the message
 
     # Finds the input box by name in DOM tree to send
     # the provided Policy in it.
     policy_number = driver.find_element(by="xpath",
-                                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div/div[2]/input')
+                                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary '
+                                              'panel-heading"]/div/div[2]/input')
     policy_number.send_keys(policy)
-
 
     # Find the Fetch button and click on it.
     driver.find_element(by="xpath",
-                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div/div[3]/input').click()
-    time.sleep(5)
+                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary '
+                              'panel-heading"]/div/div[3]/input').click()
+    time.sleep(3)
     # Checking if the screen is loading
     cssValue = driver.find_element(by="xpath", value='//div[4]').value_of_css_property('display')
     print(cssValue)
@@ -87,24 +93,38 @@ def correct_regNo(policy_number, reg_number):
         if cssValue == 'none':
             print("done waiting")
 
+    # Checking the value of the reg
+    valueofReg = driver.find_element(by="xpath",
+                                     value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
+                                           '8]/div[3]/input').get_attribute("value")
+    if valueofReg == "":
+        print("There was an error try again later")
+        driver.close()
+        driver.quit()
+    else:
+        print("no error")
 
-    #Editing the Reg Number
+    # Editing the Reg Number
     driver.find_element(by="xpath",
-                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[8]/div[3]/input').clear()
+                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
+                              '8]/div[3]/input').clear()
     reg_No = driver.find_element(by="xpath",
-                                 value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[8]/div[3]/input')
+                                 value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary '
+                                       'panel-heading"]/div[8]/div[3]/input')
     reg_No.send_keys(correct_regNo)
     time.sleep(0.5)
 
     # Find the Save button and click on it.
     driver.find_element(by="xpath",
-                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[14]/div/input').click()
+                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
+                              '14]/div/input').click()
     time.sleep(0.5)
 
     # Find the Yes button and click on it.
     driver.find_element(by="xpath",
-                        value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable ui-dialog-buttons"]/div/div/button').click()
-    time.sleep(5)
+                        value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable '
+                              'ui-resizable ui-dialog-buttons"]/div/div/button').click()
+    time.sleep(2)
     cssValue = driver.find_element(by="xpath", value='//div[4]').value_of_css_property('display')
     print(cssValue)
     # Waiting for Screen to load before Updating the policy
@@ -119,4 +139,3 @@ def correct_regNo(policy_number, reg_number):
     # Quits the driver
     driver.close()
     driver.quit()
-
