@@ -45,31 +45,63 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-CHOOSING, REG_CHOICE, CHASIS_CHOICE, VERIFY_CHOICE, CHASSIS_ONLY_CHOICE, NAME_CHOICE = range(
-    6)
+FIRST_CHOICE, CHOOSING, REG_CHOICE, CHASIS_CHOICE, VERIFY_CHOICE, CHASSIS_ONLY_CHOICE, NAME_CHOICE = range(
+    7)
 
 reply_keyboard = [
+    ["Scratch Card Platform", "E-PIN Platform"],
+    ["Cancel❌"]
+]
+reply_keyboard2 = [
     ["Reg Correction", "Reg and Chassis Correction"],
     ["Chassis Correction", "Verify Policy"],
     ["Change Name"],
     ["Cancel❌"]
 ]
 markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+markup2 = ReplyKeyboardMarkup(reply_keyboard2, one_time_keyboard=True)
 
 
+# Starts the converstaion with the bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start the conversation and ask user for input."""
     await update.message.reply_text(
         "Good Day I'm A&G Policy Corrections Bot.\n"
-        "How may i help you today?\nWhat correction would you like to make?",
+        "How may i help you today?\nIn what platform would you like to make corrections?",
         reply_markup=markup,
+    )
+
+    return FIRST_CHOICE
+
+# ask for the platform in which updates will be made
+async def Platform_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Start the conversation and ask user for input."""
+    await update.message.reply_text(
+        "Policy corrections will will be updated on the Scratch Platform\n"
+        "What correction would you like to make?",
+        reply_markup=markup2,
     )
 
     return CHOOSING
 
+
+# E_PIN PLATFORM FUNCTIONS
+
+async def Platform_choice_epin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Start the conversation and ask user for input."""
+    await update.message.reply_text(
+        "Sorry Automated corrections on E-PIN Platform mis not available for now ",
+        reply_markup=ReplyKeyboardRemove(),
+    )
+
+    return ConversationHandler.END
+
+
+#--------------------------------------------------
+
+
+# SCRATCH CARD PLTFROM FUNCTIONS
 # the regular choice runs the registration number correction
-
-
 async def regular_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Ask the user for info about the selected predefined choice."""
     text = update.message.text
@@ -97,12 +129,13 @@ async def regular_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
             correct_regNoNiid(POLICY_NUMBER, REG_NUMBER, INCORRECT_REGNUMBER)
             await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
-            await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
+            await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅', reply_markup=ReplyKeyboardRemove())
             print('Done✅')
 
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=chat_id, text=f'Sorry there might be a network error please try again')
+        print(f'{context.error}')
+        await context.bot.send_message(chat_id=chat_id, text=f'Sorry there might be a network error please try again', reply_markup=ReplyKeyboardRemove())
 
     application.add_error_handler(error)
     job_queue.run_once(callback_30, 0.5)
@@ -138,11 +171,12 @@ async def reg_and_chassis_choice(update: Update, context: ContextTypes.DEFAULT_T
             await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
             correct_regNoNiid(POLICY_NUMBER, REG_NUMBER, INCORRECT_REGNUMBER)
             await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
-            await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
+            await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅', reply_markup=ReplyKeyboardRemove())
             print('Done✅')
 
         async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-            await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again')
+            await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again', reply_markup=ReplyKeyboardRemove())
+
 
         application.add_error_handler(error)
 
@@ -168,11 +202,11 @@ async def verify_policies(update: Update, context: ContextTypes.DEFAULT_TYPE):
         POLICY_DATA = verify_policy(POLICY_NUMBER)
         All_DATA = "\n".join(POLICY_DATA)
         await context.bot.send_message(chat_id=chat_id, text='Record')
-        await context.bot.send_message(chat_id=chat_id, text=f'{All_DATA.upper()}')
+        await context.bot.send_message(chat_id=chat_id, text=f'{All_DATA.upper()}',  reply_markup=ReplyKeyboardRemove())
         print('Done✅')
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again')
+        await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again', reply_markup=ReplyKeyboardRemove())
 
     job_queue.run_once(callback_30, 0.2)
     application.add_error_handler(error)
@@ -208,12 +242,12 @@ async def chassis_OnlyChoice(update: Update, context: ContextTypes.DEFAULT_TYPE)
             # I copied the reg number form the policy and im updating the policy on NIIID
             correct_chassisNo_Niid(POLICY_NUMBER, REG_NUMBER, CHASSIS_NUMBER, )
             await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
-            await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
+            await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅', reply_markup=ReplyKeyboardRemove())
             print('Done✅')
 
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again')
+        await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again', reply_markup=ReplyKeyboardRemove())
 
     job_queue.run_once(callback_30, 0.5)
     application.add_error_handler(error)
@@ -240,12 +274,12 @@ async def changeName(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
         change_name(POLICY_NUMBER, FIRSTNAME, LASTNAME)
-        await context.bot.send_message(chat_id=chat_id, text='Name Changed✅')
+        await context.bot.send_message(chat_id=chat_id, text='Name Changed✅', reply_markup=ReplyKeyboardRemove())
         time.sleep(0.5)
         print('Done✅')
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again')
+        await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again', reply_markup=ReplyKeyboardRemove())
 
     job_queue.run_once(callback_30, 0.5)
     application.add_error_handler(error)
@@ -289,7 +323,10 @@ async def verify_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
                                     'Make sure the information you provide is correct\nWrite The details in this format👇')
     # time.sleep(1)
     await update.message.reply_text(
-        'certificateNumber')
+        'certificateNumber',
+
+    )
+
 
     return VERIFY_CHOICE
 
@@ -341,13 +378,21 @@ if __name__ == "__main__":
     """Run the bot."""
     # Create the Application and pass it your bot's token.
     application = Application.builder().token(
-        "6679542308:AAFwAJJ3wIj5LZ9fxjm_SPS07N8mpJlrVuw").build()
+        "6679542308:AAFwAJJ3wIj5LZ9fxjm_SPS07N8mpJlrVuw").read_timeout(500).write_timeout(500).build()
     job_queue = application.job_queue
 
     # Add conversation handler with the states CHOOSING, REG_CHOICE, CHASISS_CHOICE, VERIFY_CHOICE
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start, block=False)],
         states={
+            FIRST_CHOICE: [
+                MessageHandler(filters.Regex(
+                    "^Scratch Card Platform$"), Platform_choice),
+                MessageHandler(filters.Regex(
+                    "^E-PIN Platform$"), Platform_choice_epin),
+                MessageHandler(filters.Regex("^Cancel") |
+                               filters.Regex("^Cancel"), cancel),
+            ],
             CHOOSING: [
                 MessageHandler(
                     filters.Regex("^Reg Correction"), custom_choice),
