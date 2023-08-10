@@ -16,6 +16,7 @@ def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
     incorrect_regNo = incorrect_regnumber  # reg_number
 
     options = webdriver.ChromeOptions()
+    # options.add_argument("--headless")
     options.add_argument("--start-maximized")
     options.add_argument('--log-level=3')
 

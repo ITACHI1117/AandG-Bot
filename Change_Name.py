@@ -8,14 +8,15 @@ from selenium.webdriver.support.wait import WebDriverWait
 from Niid_Correction import correct_regNoNiid
 
 # Main Function
-def correct_regNo(policy_number, reg_number):
+def change_name(policy_number, firstname,lastname):
     # Provide the email and password
     email = 'mayowa_admin'
     password = 'Gbohunmi17'
 
     # Provide policy number
     policy = policy_number
-    correct_regNo = reg_number
+    first = firstname
+    last = lastname
 
     options = webdriver.ChromeOptions()
     # options.add_argument("--headless")
@@ -73,7 +74,7 @@ def correct_regNo(policy_number, reg_number):
     driver.find_element(by="xpath",
                         value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary '
                               'panel-heading"]/div/div[3]/input').click()
-    time.sleep(3)
+    time.sleep(1.5)
 
     # Checking if the screen is loading
     cssValue = driver.find_element(by="xpath", value='//div[4]').value_of_css_property('display')
@@ -83,22 +84,10 @@ def correct_regNo(policy_number, reg_number):
         cssValue = driver.find_element(by="xpath", value='//div[4]').value_of_css_property('display')
         print(cssValue)
         print('waiting')
-        time.sleep(3)
+        time.sleep(1.5)
         if cssValue == 'none':
             print("done waiting")
 
-    time.sleep(1)
-
-    # checking for error message
-    errobox_value = driver.find_element(by="xpath", value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable ui-dialog-buttons"]').value_of_css_property('display')
-    print(errobox_value)
-    if errobox_value == 'block':
-        error_message = driver.find_element(by="xpath", value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable ui-dialog-buttons"]/div[2]').text
-        print(error_message)
-    else:
-        print("policy found")
-
-    time.sleep(5)
     # Checking the value of the reg
     valueofReg = driver.find_element(by="xpath",
                                      value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
@@ -119,16 +108,22 @@ def correct_regNo(policy_number, reg_number):
     print(Reg_number)
 
     time.sleep(0.5)
-    # Editing the Reg Number
-
+    # Editing the First Name
     driver.find_element(by="xpath",
-                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
-                              '8]/div[3]/input').clear()
-    reg_No = driver.find_element(by="xpath",
-                                 value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary '
-                                       'panel-heading"]/div[8]/div[3]/input')
-    reg_No.send_keys(correct_regNo)
+                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[4]/div[1]/input').clear()
+    namefirst = driver.find_element(by="xpath",
+                                 value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[4]/div[1]/input')
+    namefirst.send_keys(first)
     time.sleep(0.5)
+
+    # Editing the SurName
+    driver.find_element(by="xpath",
+                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[4]/div[2]/input').clear()
+    namefirst = driver.find_element(by="xpath",
+                                    value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[4]/div[2]/input')
+    namefirst.send_keys(last)
+    time.sleep(0.5)
+
 
     # Find the Save button and click on it.
     driver.find_element(by="xpath",
@@ -140,7 +135,8 @@ def correct_regNo(policy_number, reg_number):
     driver.find_element(by="xpath",
                         value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable '
                               'ui-resizable ui-dialog-buttons"]/div/div/button').click()
-    time.sleep(2)
+    time.sleep(1.5)
+
     cssValue = driver.find_element(by="xpath", value='//div[4]').value_of_css_property('display')
     print(cssValue)
     # Waiting for Screen to load before Updating the policy
@@ -148,7 +144,7 @@ def correct_regNo(policy_number, reg_number):
         cssValue = driver.find_element(by="xpath", value='//div[4]').value_of_css_property('display')
         print(cssValue)
         print('waiting')
-        time.sleep(3)
+        time.sleep(1.5)
         if cssValue == 'none':
             print("done waiting")
 
@@ -157,5 +153,4 @@ def correct_regNo(policy_number, reg_number):
     driver.close()
     driver.quit()
 
-    return Reg_number
-
+    return

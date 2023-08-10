@@ -1,16 +1,13 @@
+input("hi what is your name")
+
+run = input("what do want to do")
+
+if run == "run this":
+    def runthis():
+        i = 1
+        while i <  100:
+            print(i+1)
+    runthis()
 
 
-print("name and surname")
-
-
-def game():
-    print("games")
-
-
-game()
-
-name = input("eneter your name")
-surname = input("enter your sur name")
-
-
-close = input("close")
+input("do another thing")

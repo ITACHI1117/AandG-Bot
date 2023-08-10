@@ -9,7 +9,7 @@ from Niid_Correction import correct_regNoNiid
 
 
 # Main Function
-def correct_reg_and_chassisNO(policy_number, reg_number, chassis_number):
+def correct_reg_and_chassisNO(policy_number,reg_number,chassis_number):
     # Provide the email and password
     email = 'mayowa_admin'
     password = 'Gbohunmi17'
@@ -104,6 +104,14 @@ def correct_reg_and_chassisNO(policy_number, reg_number, chassis_number):
     else:
         print("no error")
 
+    # Getting the value of the Reg Number So update on NIID can be made
+    value_text = driver.find_element(by="xpath",
+                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
+                              '8]/div[3]/input')
+    Reg_number = value_text.get_attribute("value")
+    print(Reg_number)
+
+    time.sleep(0.5)
     # Editing the Reg Number
     driver.find_element(by="xpath",
                         value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
@@ -149,3 +157,5 @@ def correct_reg_and_chassisNO(policy_number, reg_number, chassis_number):
     # Quits the driver
     driver.close()
     driver.quit()
+
+    return Reg_number

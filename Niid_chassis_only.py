@@ -4,7 +4,7 @@ import time
 from selenium.webdriver.chrome.service import Service
 
 # Main Function
-def correct_reg_and_chassisNo_Niid(policy_number,reg_number,incorrect_regnumber,chassis_number):
+def correct_chassisNo_Niid(policy_number, reg_number, chassis_number):
     # Provide the email and password
     email = 'mayowaa'
     password = 'Lovely1'
@@ -13,7 +13,6 @@ def correct_reg_and_chassisNo_Niid(policy_number,reg_number,incorrect_regnumber,
     # Provide policy number
     policy = policy_number  # policy_number
     correct_regNo = reg_number
-    incorrect_regNo = incorrect_regnumber  # reg_number
     correct_chassisNo = chassis_number
 
     options = webdriver.ChromeOptions()
@@ -69,7 +68,7 @@ def correct_reg_and_chassisNo_Niid(policy_number,reg_number,incorrect_regnumber,
     reg_No = driver.find_element(by="xpath",
                                  value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table'
                                        '/tbody/tr[5]/td[2]/span/input')
-    reg_No.send_keys(incorrect_regNo)
+    reg_No.send_keys(correct_regNo)
     time.sleep(1.5)
 
     # Finding the search Button and clicking on it
@@ -101,26 +100,6 @@ def correct_reg_and_chassisNo_Niid(policy_number,reg_number,incorrect_regnumber,
         new_email.send_keys(comapny_email)
         time.sleep(1.5)
 
-    # Editing the Licence Number
-    driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
-                              '14]/td[2]/input').clear()
-    time.sleep(0.5)
-    driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
-                              '14]/td[2]/input').send_keys(
-        correct_regNo)
-    time.sleep(0.5)
-
-    # Editing the Old Licence Number
-    driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
-                              '15]/td[2]/input').clear()
-    time.sleep(0.5)
-    driver.find_element(by="xpath",
-                        value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
-                              '15]/td[2]/input').send_keys(
-        correct_regNo)
 
     # Editing the Chassis Number
     driver.find_element(by="xpath",
@@ -150,3 +129,4 @@ def correct_reg_and_chassisNo_Niid(policy_number,reg_number,incorrect_regnumber,
     # closing the Page
     driver.close()
     driver.quit()
+
