@@ -4,6 +4,8 @@ import time
 from selenium.webdriver.chrome.service import Service
 
 # Main Function
+
+
 def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
     # Provide the email and password
     email = 'mayowaa'
@@ -21,7 +23,7 @@ def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
     options.add_argument('--log-level=3')
 
     # Provide the path of chromedriver present on your system.
-    path = "chromedriver-win64.exe"
+    path = (r"chromedriver.exe")
     service = Service(executable_path=path)
     driver = webdriver.Chrome(options=options, service=service)
     # driver.set_window_size(1920, 1080)
@@ -41,7 +43,8 @@ def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
     time.sleep(1.5)
 
     # Find the Login button and click on it.
-    driver.find_element(by="xpath", value='//div[@id="MainContent_UpdatePanel1"]/table/tbody/tr[7]/td/a/input').click()
+    driver.find_element(
+        by="xpath", value='//div[@id="MainContent_UpdatePanel1"]/table/tbody/tr[7]/td/a/input').click()
     time.sleep(1.5)
 
     # Find the Request(Endorsements) link and click on it.
@@ -121,7 +124,6 @@ def correct_regNoNiid(policy_number, reg_number, incorrect_regnumber):
                         value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
                               '15]/td[2]/input').send_keys(
         correct_regNo)
-
 
     # Finding the change button and clicking on it
     driver.find_element(by="xpath",
