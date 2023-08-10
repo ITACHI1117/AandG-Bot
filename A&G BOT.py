@@ -4,7 +4,6 @@ import asyncio
 from typing import Dict
 
 
-
 from telegram import __version__ as TG_VER
 
 from Change_Name import change_name
@@ -46,11 +45,12 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-CHOOSING, REG_CHOICE, CHASIS_CHOICE, VERIFY_CHOICE, CHASSIS_ONLY_CHOICE, NAME_CHOICE = range(6)
+CHOOSING, REG_CHOICE, CHASIS_CHOICE, VERIFY_CHOICE, CHASSIS_ONLY_CHOICE, NAME_CHOICE = range(
+    6)
 
 reply_keyboard = [
     ["Reg Correction", "Reg and Chassis Correction"],
-    ["Chassis Correction","Verify Policy"],
+    ["Chassis Correction", "Verify Policy"],
     ["Change Name"],
     ["Cancel❌"]
 ]
@@ -68,6 +68,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return CHOOSING
 
 # the regular choice runs the registration number correction
+
+
 async def regular_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Ask the user for info about the selected predefined choice."""
     text = update.message.text
@@ -89,17 +91,21 @@ async def regular_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
 
         INCORRECT_REGNUMBER = correct_regNo(POLICY_NUMBER, REG_NUMBER)
-        await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
-        correct_regNoNiid(POLICY_NUMBER, REG_NUMBER, INCORRECT_REGNUMBER)
-        await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
-        await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
-        print('Done✅')
+        if INCORRECT_REGNUMBER == 'Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed':
+            await context.bot.send_message(chat_id=chat_id, text='Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed')
+        else:
+            await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
+            correct_regNoNiid(POLICY_NUMBER, REG_NUMBER, INCORRECT_REGNUMBER)
+            await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
+            await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
+            print('Done✅')
+
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=chat_id, text='There was an error')
+        await context.bot.send_message(chat_id=chat_id, text=f'Sorry there might be a network error please try again')
 
-    job_queue.run_once(callback_30, 0.5)
     application.add_error_handler(error)
+    job_queue.run_once(callback_30, 0.5)
     return ConversationHandler.END
 
 
@@ -124,22 +130,29 @@ async def reg_and_chassis_choice(update: Update, context: ContextTypes.DEFAULT_T
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
         # Getting the Incorrect reg number form the function
 
-        INCORRECT_REGNUMBER = correct_reg_and_chassisNO(POLICY_NUMBER, REG_NUMBER, CHASSIS_NUMBER)
-        await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
-        time.sleep(0.5)
-        correct_reg_and_chassisNo_Niid(POLICY_NUMBER, REG_NUMBER, INCORRECT_REGNUMBER, CHASSIS_NUMBER)
-        await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
-        await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
-        print('Done✅')
+        INCORRECT_REGNUMBER = correct_regNo(POLICY_NUMBER, REG_NUMBER)
+        if INCORRECT_REGNUMBER == 'Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed':
+            await context.bot.send_message(chat_id=chat_id,
+                                           text='Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed')
+        else:
+            await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
+            correct_regNoNiid(POLICY_NUMBER, REG_NUMBER, INCORRECT_REGNUMBER)
+            await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
+            await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
+            print('Done✅')
 
-    async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=chat_id, text=f'{chat_id}: There was an error')
+        async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
+            await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again')
 
-    job_queue.run_once(callback_30, 0.5)
-    application.add_error_handler(error)
+        application.add_error_handler(error)
+
+
+    job_queue.run_once(callback_30, 0.2)
+
     return ConversationHandler.END
 
-#Verify Policy Function
+# Verify Policy Function
+
 async def verify_policies(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Ask the user for info about the selected predefined choice."""
     text = update.message.text
@@ -156,16 +169,16 @@ async def verify_policies(update: Update, context: ContextTypes.DEFAULT_TYPE):
         All_DATA = "\n".join(POLICY_DATA)
         await context.bot.send_message(chat_id=chat_id, text='Record')
         await context.bot.send_message(chat_id=chat_id, text=f'{All_DATA.upper()}')
-        time.sleep(0.5)
         print('Done✅')
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=chat_id, text=f'{chat_id}: There was an error')
+        await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again')
 
-    job_queue.run_once(callback_30, 0.5)
+    job_queue.run_once(callback_30, 0.2)
     application.add_error_handler(error)
 
     return ConversationHandler.END
+
 
 async def chassis_OnlyChoice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Ask the user for info about the selected predefined choice."""
@@ -186,21 +199,27 @@ async def chassis_OnlyChoice(update: Update, context: ContextTypes.DEFAULT_TYPE)
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
 
         REG_NUMBER = correct_chassisNO(POLICY_NUMBER, CHASSIS_NUMBER)
-        await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
-        # Since the agent only wants to update the chasis number that means the reg number on the policy is correct so
-        # I copied the reg number form the policy and im updating the policy on NIIID
-        correct_chassisNo_Niid(POLICY_NUMBER, REG_NUMBER, CHASSIS_NUMBER,)
-        await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
-        await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
-        print('Done✅')
+        if REG_NUMBER == 'Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed':
+            await context.bot.send_message(chat_id=chat_id,
+                                           text='Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed')
+        else:
+            await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
+            # Since the agent only wants to update the chasis number that means the reg number on the policy is correct so
+            # I copied the reg number form the policy and im updating the policy on NIIID
+            correct_chassisNo_Niid(POLICY_NUMBER, REG_NUMBER, CHASSIS_NUMBER, )
+            await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
+            await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅')
+            print('Done✅')
+
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=chat_id, text=f'There was an error')
+        await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again')
 
     job_queue.run_once(callback_30, 0.5)
     application.add_error_handler(error)
 
     return ConversationHandler.END
+
 
 async def changeName(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Ask the user for info about the selected predefined choice."""
@@ -226,7 +245,7 @@ async def changeName(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print('Done✅')
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=chat_id, text=f'There was an error')
+        await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again')
 
     job_queue.run_once(callback_30, 0.5)
     application.add_error_handler(error)
@@ -234,6 +253,8 @@ async def changeName(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 # custom ask the details of the policy
+
+
 async def custom_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Ask the user for a description of a custom category."""
     await update.message.reply_text(
@@ -260,31 +281,36 @@ async def another_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     return CHASIS_CHOICE
 
 # verifies the policy
+
+
 async def verify_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Ask the user for a description of a custom category."""
     await update.message.reply_text("Send the correct Certificate Number\n"
-        'Make sure the information you provide is correct\nWrite The details in this format👇')
+                                    'Make sure the information you provide is correct\nWrite The details in this format👇')
     # time.sleep(1)
     await update.message.reply_text(
         'certificateNumber')
 
     return VERIFY_CHOICE
 
-#runs the correction for chassis number only
+# runs the correction for chassis number only
+
+
 async def chasis_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Ask the user for a description of a custom category."""
     await update.message.reply_text("Send the correct required Policy details\n"
-        'Make sure the information you provide is correct\nWrite The details in this format👇')
+                                    'Make sure the information you provide is correct\nWrite The details in this format👇')
     # time.sleep(1)
     await update.message.reply_text(
         'policyNumber,chassisNumber')
 
     return CHASSIS_ONLY_CHOICE
 
+
 async def change_name_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Ask the user for a description of a custom category."""
     await update.message.reply_text("Send the correct required Policy details\n"
-        'Make sure the information you provide is correct\nWrite The details in this format👇')
+                                    'Make sure the information you provide is correct\nWrite The details in this format👇')
     # time.sleep(1)
     await update.message.reply_text(
         'policyNumber,firstname,lastname')
@@ -292,6 +318,8 @@ async def change_name_choice(update: Update, context: ContextTypes.DEFAULT_TYPE)
     return NAME_CHOICE
 
 # CANCELS THE OPERATION
+
+
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await update.message.reply_text(
         f"Operation Canceled",
@@ -299,7 +327,9 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     )
     return ConversationHandler.END
 
-#LOGS ERROR
+# LOGS ERROR
+
+
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
 
@@ -310,9 +340,9 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == "__main__":
     """Run the bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token("6679542308:AAFwAJJ3wIj5LZ9fxjm_SPS07N8mpJlrVuw").read_timeout(120).write_timeout(120).build()
+    application = Application.builder().token(
+        "6679542308:AAFwAJJ3wIj5LZ9fxjm_SPS07N8mpJlrVuw").build()
     job_queue = application.job_queue
-
 
     # Add conversation handler with the states CHOOSING, REG_CHOICE, CHASISS_CHOICE, VERIFY_CHOICE
     conv_handler = ConversationHandler(
@@ -321,36 +351,46 @@ if __name__ == "__main__":
             CHOOSING: [
                 MessageHandler(
                     filters.Regex("^Reg Correction"), custom_choice),
-                MessageHandler(filters.Regex("^Reg and Chassis Correction$"), another_choice),
-                MessageHandler(filters.Regex("^Verify Policy$"), verify_choice),
-                MessageHandler(filters.Regex("^Chassis Correction"), chasis_choice),
-                MessageHandler(filters.Regex("^Change Name"), change_name_choice),
-                MessageHandler(filters.Regex("^Cancel") | filters.Regex("^Cancel"), cancel),
+                MessageHandler(filters.Regex(
+                    "^Reg and Chassis Correction$"), another_choice),
+                MessageHandler(filters.Regex(
+                    "^Verify Policy$"), verify_choice),
+                MessageHandler(filters.Regex(
+                    "^Chassis Correction"), chasis_choice),
+                MessageHandler(filters.Regex("^Change Name"),
+                               change_name_choice),
+                MessageHandler(filters.Regex("^Cancel") |
+                               filters.Regex("^Cancel"), cancel),
 
             ],
             REG_CHOICE: [
                 MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND | filters.Regex("^Cancel")), regular_choice
+                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                        "^Cancel")), regular_choice
                 )
             ],
             CHASIS_CHOICE: [
                 MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND | filters.Regex("^Cancel")), reg_and_chassis_choice
+                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                        "^Cancel")), reg_and_chassis_choice
                 )
             ],
             VERIFY_CHOICE: [
                 MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND | filters.Regex("^Cancel")), verify_policies
+                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                        "^Cancel")), verify_policies
                 )
             ],
             CHASSIS_ONLY_CHOICE: [
                 MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND | filters.Regex("^Cancel")), chassis_OnlyChoice
+                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                        "^Cancel")), chassis_OnlyChoice
                 )
             ],
             NAME_CHOICE: [
                 MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND | filters.Regex("^Cancel")), changeName
+                    filters.TEXT & ~(filters.COMMAND |
+                                     filters.Regex("^Cancel")), changeName
                 )
             ],
         },
