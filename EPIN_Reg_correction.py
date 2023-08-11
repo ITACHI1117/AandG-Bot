@@ -7,16 +7,17 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from Niid_Correction import correct_regNoNiid
 
-
 # Main Function
-def correct_chassisNO(policy_number, chassis_number,platform_data):
+
+
+def correct_epin_regNo(policy_number, reg_number,link):
     # Provide the email and password
-    email = platform_data[1]
-    password = platform_data[2]
+    email = 'mayowa1022'
+    password = 'Gbohunmi17'
 
     # Provide policy number
     policy = policy_number
-    correct_chassisNo = chassis_number
+    correct_regNo = reg_number
 
     options = webdriver.ChromeOptions()
     # options.add_argument("--headless")
@@ -30,9 +31,8 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
     # driver.set_window_size(1920, 1080)
 
     # Send a get request to the url
-    driver.get(platform_data[0])
+    driver.get(link)
     time.sleep(0.5)
-    # https: // auth.geeksforgeeks.org /
 
     # Finds the input box by name in DOM tree to send both
     # the provided email and password in it.
@@ -58,22 +58,21 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
     time.sleep(0.5)
 
     # Find the Search by option and click on it.
-    driver.find_element(by="xpath",
-                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
-                              '3]/div/select').click()
+    driver.find_element(
+        by="xpath", value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[3]/div/select').click()
     time.sleep(0.5)
 
     # Find the fetch by policy button and click on it.
-    driver.find_element(by="xpath",
-                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
-                              '3]/div/select/option[2]').click()
+    driver.find_element(
+        by="xpath", value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[3]/div/select/option[2]').click()
     time.sleep(0.5)
+
+    # Check if the error box showed up and print the message
 
     # Finds the input box by name in DOM tree to send
     # the provided Policy in it.
-    policy_number = driver.find_element(by="xpath",
-                                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary '
-                                              'panel-heading"]/div/div[2]/input')
+    policy_number = driver.find_element(
+        by="xpath", value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div/div[2]/input')
     policy_number.send_keys(policy)
 
     # Find the Fetch button and click on it.
@@ -81,7 +80,6 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
                         value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary '
                               'panel-heading"]/div/div[3]/input').click()
     time.sleep(1.5)
-
 
     # Checking if the screen is loading
     cssValue = driver.find_element(
@@ -91,29 +89,29 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
     while cssValue == 'block':
         cssValue = driver.find_element(
             by="xpath", value='//div[4]').value_of_css_property('display')
+        print(cssValue)
         print('Loading...')
-        time.sleep(1.5)
+        time.sleep(1.2)
         if cssValue == 'none':
             print("Done Loading✅")
 
+    time.sleep(1)
+
     # checking for error message
     errobox_value = driver.find_element(
-        by="xpath",
-        value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable ui-dialog-buttons"][2]').value_of_css_property(
-        'display')
+        by="xpath", value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable ui-dialog-buttons"][2]').value_of_css_property('display')
 
     print(f"error value ={errobox_value}")
     ERROR_MESSAGE = ""
     if errobox_value == 'block':
         ERROR_MESSAGE = driver.find_element(
-            by="xpath",
-            value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable ui-dialog-buttons"][2]/div[2]').text
+            by="xpath", value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable ui-dialog-buttons"][2]/div[2]').text
         print(f"error message ={ERROR_MESSAGE}")
         return ERROR_MESSAGE
     else:
         print("policy found")
 
-
+    time.sleep(0.5)
     # Checking the value of the reg
     valueofReg = driver.find_element(by="xpath",
                                      value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
@@ -125,20 +123,23 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
     else:
         print("no error")
 
-    # Getting the Reg Number So update on NIID can be made
+    # Getting the value of the Reg Number So update on NIID can be made
     value_text = driver.find_element(by="xpath",
                                      value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
                                      '8]/div[3]/input')
     Reg_number = value_text.get_attribute("value")
     print(Reg_number)
 
-    # Editing the Chassis Number
-    driver.find_element(by="xpath",
-                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[8]/div[2]/input').clear()
-    chassis_No = driver.find_element(by="xpath",
-                                     value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[8]/div[2]/input')
-    chassis_No.send_keys(correct_chassisNo)
+    time.sleep(0.5)
+    # Editing the Reg Number
 
+    driver.find_element(by="xpath",
+                        value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
+                              '8]/div[3]/input').clear()
+    reg_No = driver.find_element(by="xpath",
+                                 value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary '
+                                       'panel-heading"]/div[8]/div[3]/input')
+    reg_No.send_keys(correct_regNo)
     time.sleep(0.5)
 
     # Find the Save button and click on it.
@@ -151,8 +152,9 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
     driver.find_element(by="xpath",
                         value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable '
                               'ui-resizable ui-dialog-buttons"]/div/div/button').click()
+    time.sleep(2)
 
-    time.sleep(1.5)
+    # checking if the screen is loading
     cssValue = driver.find_element(
         by="xpath", value='//div[4]').value_of_css_property('display')
     print(cssValue)
@@ -161,12 +163,15 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
         cssValue = driver.find_element(
             by="xpath", value='//div[4]').value_of_css_property('display')
         print('Loading...')
-        time.sleep(1.5)
+        time.sleep(1.2)
         if cssValue == 'none':
             print("Done Loading✅")
 
+    print("done")
     # Quits the driver
     driver.close()
     driver.quit()
 
     return Reg_number
+
+correct_epin_regNo("eee","1111")

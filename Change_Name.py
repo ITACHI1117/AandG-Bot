@@ -10,10 +10,10 @@ from Niid_Correction import correct_regNoNiid
 # Main Function
 
 
-def change_name(policy_number, firstname, lastname):
+def change_name(policy_number, firstname, lastname,platform_data):
     # Provide the email and password
-    email = 'mayowa_admin'
-    password = 'Gbohunmi17'
+    email = platform_data[1]
+    password = platform_data[2]
 
     # Provide policy number
     policy = policy_number
@@ -32,7 +32,7 @@ def change_name(policy_number, firstname, lastname):
     # driver.set_window_size(1920, 1080)
 
     # Send a get request to the url
-    driver.get('https://aginsuranceapplications.com/card/Index.aspx')
+    driver.get(platform_data[0])
     time.sleep(0.5)
     # https: // auth.geeksforgeeks.org /
 
@@ -96,6 +96,22 @@ def change_name(policy_number, firstname, lastname):
         time.sleep(1.5)
         if cssValue == 'none':
             print("done waiting")
+
+    # checking for error message
+    errobox_value = driver.find_element(
+        by="xpath", value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable ui-dialog-buttons"][2]').value_of_css_property('display')
+
+    print(f"error value ={errobox_value}")
+    ERROR_MESSAGE = ""
+    if errobox_value == 'block':
+        ERROR_MESSAGE = driver.find_element(
+            by="xpath", value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable ui-dialog-buttons"][2]/div[2]').text
+        print(f"error message ={ERROR_MESSAGE}")
+        return ERROR_MESSAGE
+    else:
+        print("policy found")
+
+    time.sleep(0.5)
 
     # Checking the value of the reg
     valueofReg = driver.find_element(by="xpath",

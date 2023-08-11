@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 FIRST_CHOICE, CHOOSING, REG_CHOICE, CHASIS_CHOICE, VERIFY_CHOICE, CHASSIS_ONLY_CHOICE, NAME_CHOICE = range(
     7)
 
+# Reply keyboards
 reply_keyboard = [
     ["Scratch Card Platform", "E-PIN Platform"],
     ["Cancel❌"]
@@ -73,14 +74,42 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return FIRST_CHOICE
 
+#Getting the Platform link from the choice the user will make when asked the pltform in which corrections will be made
+def getLink(PLATFORM_CHOICE):
+    Scratch_Card_Platform_Link = 'https://aginsuranceapplications.com/card/Index.aspx'
+    E_PIN_LINK = "https://aginsuranceapplications.com/"
+    if PLATFORM_CHOICE == 'Scratch Card Platform':
+        email = 'mayowa_admin'
+        password = 'Gbohunmi17'
+        link = Scratch_Card_Platform_Link
+        return link,email,password,PLATFORM_CHOICE
+    else:
+        email = 'mayowa1022'
+        password = 'Gbohunmi17'
+        link = Scratch_Card_Platform_Link
+        return E_PIN_LINK,email,password,PLATFORM_CHOICE
+
+
 # ask for the platform in which updates will be made
 async def Platform_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start the conversation and ask user for input."""
-    await update.message.reply_text(
-        "Policy corrections will will be updated on the Scratch Platform\n"
-        "What correction would you like to make?",
-        reply_markup=markup2,
-    )
+    text = update.message.text
+    global PLATFORM_LINK
+    PLATFORM_LINK = getLink(text)
+    print(PLATFORM_LINK)
+    if PLATFORM_LINK[3] == 'Scratch Card Platform':
+        await update.message.reply_text(
+            "Policy corrections will will be updated on the Scratch Platform\n"
+            "What correction would you like to make?",
+            reply_markup=markup2,
+        )
+    else:
+        await update.message.reply_text(
+            "Policy corrections will will be updated on the E_PIN Platform\n"
+            "What correction would you like to make?",
+            reply_markup=markup2,
+        )
+
 
     return CHOOSING
 
@@ -90,14 +119,14 @@ async def Platform_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def Platform_choice_epin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start the conversation and ask user for input."""
     await update.message.reply_text(
-        "Sorry Automated corrections on E-PIN Platform mis not available for now ",
+        "Sorry Automated corrections on E-PIN Platform is not available for now ",
         reply_markup=ReplyKeyboardRemove(),
     )
 
     return ConversationHandler.END
 
 
-#--------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------
 
 
 # SCRATCH CARD PLTFROM FUNCTIONS
@@ -121,8 +150,7 @@ async def regular_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(REG_NUMBER)
 
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
-
-        INCORRECT_REGNUMBER = correct_regNo(POLICY_NUMBER, REG_NUMBER)
+        INCORRECT_REGNUMBER = correct_regNo(POLICY_NUMBER, REG_NUMBER,PLATFORM_LINK)
         if INCORRECT_REGNUMBER == 'Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed':
             await context.bot.send_message(chat_id=chat_id, text='Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed')
         else:
@@ -163,7 +191,7 @@ async def reg_and_chassis_choice(update: Update, context: ContextTypes.DEFAULT_T
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
         # Getting the Incorrect reg number form the function
 
-        INCORRECT_REGNUMBER = correct_regNo(POLICY_NUMBER, REG_NUMBER)
+        INCORRECT_REGNUMBER = correct_regNo(POLICY_NUMBER, REG_NUMBER,PLATFORM_LINK)
         if INCORRECT_REGNUMBER == 'Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed':
             await context.bot.send_message(chat_id=chat_id,
                                            text='Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed')
@@ -199,11 +227,16 @@ async def verify_policies(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(POLICY_NUMBER)
 
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
-        POLICY_DATA = verify_policy(POLICY_NUMBER)
-        All_DATA = "\n".join(POLICY_DATA)
-        await context.bot.send_message(chat_id=chat_id, text='Record')
-        await context.bot.send_message(chat_id=chat_id, text=f'{All_DATA.upper()}',  reply_markup=ReplyKeyboardRemove())
-        print('Done✅')
+        POLICY_DATA = verify_policy(POLICY_NUMBER,PLATFORM_LINK)
+        if POLICY_DATA == "There is no Existing Policy Record for the Certificate Number you Typed":
+            await context.bot.send_message(chat_id=chat_id, text='There is no Existing Policy Record for the Certificate Number you Typed')
+        else:
+            All_DATA = "\n".join(POLICY_DATA)
+            await context.bot.send_message(chat_id=chat_id, text='Record')
+            await context.bot.send_message(chat_id=chat_id, text=f'{All_DATA.upper()}',
+                                           reply_markup=ReplyKeyboardRemove())
+            print('Done✅')
+
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again', reply_markup=ReplyKeyboardRemove())
@@ -232,7 +265,7 @@ async def chassis_OnlyChoice(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
 
-        REG_NUMBER = correct_chassisNO(POLICY_NUMBER, CHASSIS_NUMBER)
+        REG_NUMBER = correct_chassisNO(POLICY_NUMBER, CHASSIS_NUMBER,PLATFORM_LINK)
         if REG_NUMBER == 'Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed':
             await context.bot.send_message(chat_id=chat_id,
                                            text='Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed')
@@ -273,10 +306,14 @@ async def changeName(update: Update, context: ContextTypes.DEFAULT_TYPE):
     LASTNAME = POLICY_INFO[2]
 
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
-        change_name(POLICY_NUMBER, FIRSTNAME, LASTNAME)
-        await context.bot.send_message(chat_id=chat_id, text='Name Changed✅', reply_markup=ReplyKeyboardRemove())
-        time.sleep(0.5)
-        print('Done✅')
+        ERROR_MESSAGE = change_name(POLICY_NUMBER, FIRSTNAME, LASTNAME,PLATFORM_LINK)
+        if ERROR_MESSAGE == 'Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed':
+            await context.bot.send_message(chat_id=chat_id,
+                                           text='Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed')
+        else:
+            await context.bot.send_message(chat_id=chat_id, text='Name Changed✅', reply_markup=ReplyKeyboardRemove())
+            time.sleep(0.5)
+            print('Done✅')
 
     async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=chat_id, text='Sorry there might be a network error please try again', reply_markup=ReplyKeyboardRemove())
@@ -389,7 +426,7 @@ if __name__ == "__main__":
                 MessageHandler(filters.Regex(
                     "^Scratch Card Platform$"), Platform_choice),
                 MessageHandler(filters.Regex(
-                    "^E-PIN Platform$"), Platform_choice_epin),
+                    "^E-PIN Platform$"), Platform_choice),
                 MessageHandler(filters.Regex("^Cancel") |
                                filters.Regex("^Cancel"), cancel),
             ],

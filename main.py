@@ -10,10 +10,10 @@ from Niid_Correction import correct_regNoNiid
 # Main Function
 
 
-def correct_regNo(policy_number, reg_number):
+def correct_regNo(policy_number, reg_number,platform_data):
     # Provide the email and password
-    email = 'mayowa_admin'
-    password = 'Gbohunmi17'
+    email = platform_data[1]
+    password = platform_data[2]
 
     # Provide policy number
     policy = policy_number
@@ -31,7 +31,7 @@ def correct_regNo(policy_number, reg_number):
     # driver.set_window_size(1920, 1080)
 
     # Send a get request to the url
-    driver.get('https://aginsuranceapplications.com/card/Index.aspx')
+    driver.get(platform_data[0])
     time.sleep(0.5)
     # https: // auth.geeksforgeeks.org /
 

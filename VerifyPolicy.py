@@ -9,10 +9,10 @@ from Niid_Correction import correct_regNoNiid
 # Main Function
 
 
-def verify_policy(certi_No):
+def verify_policy(certi_No,platform_data):
     # Provide the email and password
-    email = 'mayowa_admin'
-    password = 'Gbohunmi17'
+    email = platform_data[1]
+    password = platform_data[2]
 
     # Provide policy number
     certi = certi_No
@@ -29,9 +29,8 @@ def verify_policy(certi_No):
     # driver.set_window_size(1920, 1080)
 
     # Send a get request to the url
-    driver.get('https://aginsuranceapplications.com/card/Index.aspx')
+    driver.get(platform_data[0])
     time.sleep(0.2)
-    # https: // auth.geeksforgeeks.org /
 
     # Finds the input box by name in DOM tree to send both
     # the provided email and password in it.
@@ -51,10 +50,19 @@ def verify_policy(certi_No):
         by="xpath", value='//div[@class="menu-list"]/ul/ul/div[6]/div/li/a').click()
     time.sleep(0.2)
 
-    # Find the Verify Policy button and click on it.
-    driver.find_element(
-        by="xpath", value='//div[@class="menu-list"]/ul/ul/div[6]/div[2]/ul/li[4]').click()
-    time.sleep(0.2)
+    # The policy button location is different for both platforms
+    # verifying which platform has been selected to check where the button is for that particular platform
+    if platform_data[3] == 'Scratch Card Platform':
+        # Find the Verify Policy button and click on it.
+        driver.find_element(
+            by="xpath", value='//div[@class="menu-list"]/ul/ul/div[6]/div[2]/ul/li[4]').click()
+        time.sleep(0.2)
+    else:
+        # Find the Verify Policy button and click on it.
+        driver.find_element(
+            by="xpath", value='//div[@class="menu-list"]/ul/ul/div[6]/div[2]/ul/li[1]').click()
+        time.sleep(0.2)
+
 
     # Find the SearchBy (select attribute) option and click on it.
     driver.find_element(
@@ -66,7 +74,7 @@ def verify_policy(certi_No):
         by="xpath", value='//div[@class="col-md-offset-3 col-md-4 center-block panel-primary panel-heading"]/select/option[3]').click()
     time.sleep(0.2)
 
-    # Check if the error box showed up and print the message
+
 
     # Finds the input box by name in DOM tree to send
     # the provided certificate number in it.
@@ -89,10 +97,25 @@ def verify_policy(certi_No):
         cssValue = driver.find_element(
             by="xpath", value='//div[4]').value_of_css_property('display')
         print(cssValue)
-        print('waiting')
+        print('Loading...')
         time.sleep(1.2)
         if cssValue == 'none':
-            print("done waiting")
+            print("Done Loading✅")
+
+
+    # Check if the error box showed up and print the message
+    errobox_value = driver.find_element(
+        by="xpath",
+        value='//div[@class="col-md-offset-3 col-md-4 center-block panel-primary panel-heading"]/span').text
+
+    if errobox_value == '':
+        print("policy found")
+    else:
+        print(f"error message ={errobox_value}")
+        return errobox_value
+
+    time.sleep(0.2)
+
 
     # Find the records table heading which is Record
     Header = driver.find_element(
@@ -101,7 +124,7 @@ def verify_policy(certi_No):
 
     time.sleep(0.2)
 
-    # Finds the Texte on the table
+    # Finds the Text on the table
     titles = driver.find_elements(
         by="xpath", value='//div[@class="col-md-offset-3 col-md-10 center-block panel-primary panel-heading"]/div[2]/table/tbody/tr/th')
     subtitles = driver.find_elements(
