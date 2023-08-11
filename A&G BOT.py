@@ -96,7 +96,7 @@ async def Platform_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     text = update.message.text
     global PLATFORM_LINK
     PLATFORM_LINK = getLink(text)
-    print(PLATFORM_LINK)
+
     if PLATFORM_LINK[3] == 'Scratch Card Platform':
         await update.message.reply_text(
             "Policy corrections will will be updated on the Scratch Platform\n"
@@ -115,17 +115,6 @@ async def Platform_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 
 # E_PIN PLATFORM FUNCTIONS
-
-async def Platform_choice_epin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Start the conversation and ask user for input."""
-    await update.message.reply_text(
-        "Sorry Automated corrections on E-PIN Platform is not available for now ",
-        reply_markup=ReplyKeyboardRemove(),
-    )
-
-    return ConversationHandler.END
-
-
 #----------------------------------------------------------------------------------------------------------------------
 
 
@@ -191,13 +180,13 @@ async def reg_and_chassis_choice(update: Update, context: ContextTypes.DEFAULT_T
     async def callback_30(context: ContextTypes.DEFAULT_TYPE):
         # Getting the Incorrect reg number form the function
 
-        INCORRECT_REGNUMBER = correct_regNo(POLICY_NUMBER, REG_NUMBER,PLATFORM_LINK)
+        INCORRECT_REGNUMBER = correct_reg_and_chassisNO(POLICY_NUMBER, REG_NUMBER,CHASSIS_NUMBER,PLATFORM_LINK)
         if INCORRECT_REGNUMBER == 'Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed':
             await context.bot.send_message(chat_id=chat_id,
                                            text='Sorry. The Policy Number you entered does not exist or may have expired and has not been renewed')
         else:
             await context.bot.send_message(chat_id=chat_id, text='Updated the policy on A&G third party platform ✅')
-            correct_regNoNiid(POLICY_NUMBER, REG_NUMBER, INCORRECT_REGNUMBER)
+            correct_reg_and_chassisNo_Niid(POLICY_NUMBER, REG_NUMBER, INCORRECT_REGNUMBER,CHASSIS_NUMBER)
             await context.bot.send_message(chat_id=chat_id, text='Updated the policy on NIID ✅')
             await context.bot.send_message(chat_id=chat_id, text='Policy Update Successful ✅', reply_markup=ReplyKeyboardRemove())
             print('Done✅')
@@ -413,9 +402,18 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == "__main__":
     """Run the bot."""
+
+    Username = input("Username: ")
+    Password = input("Passowrd: ")
+
+    while Username != "Joseph" and Password != "Aginsure":
+        application = Application.builder().token(
+            "6679542308:AAFwAJJ3wIj5LZ9fxjm_SPS07N8mpJlrVuw").read_timeout(500).write_timeout(500).build()
+    else:
+        print("invalid user")
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token(
-        "6679542308:AAFwAJJ3wIj5LZ9fxjm_SPS07N8mpJlrVuw").read_timeout(500).write_timeout(500).build()
+
+
     job_queue = application.job_queue
 
     # Add conversation handler with the states CHOOSING, REG_CHOICE, CHASISS_CHOICE, VERIFY_CHOICE
