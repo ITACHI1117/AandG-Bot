@@ -6,6 +6,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 
 from Niid_Correction import correct_regNoNiid
+from Write_Logs import write_logs
+
 
 # Main Function
 
@@ -168,6 +170,16 @@ def correct_regNo(policy_number, reg_number,platform_data):
         if cssValue == 'none':
             print("Done Loading✅")
 
+    # Geting the policy details
+    POLICY_NUMBER = policy
+    NEW_REGNUMBER = reg_number
+    OLD_REGNUMBER = Reg_number
+
+    POLICY_DETAILS = [f"POLICY NUMBER: {POLICY_NUMBER}", f"POLICY NUMBER: {NEW_REGNUMBER}", f"POLICY NUMBER: {OLD_REGNUMBER}"]
+    print(POLICY_DETAILS)
+
+    # calling the write log function to write the log files
+    write_logs(POLICY_NUMBER,NEW_REGNUMBER,OLD_REGNUMBER,None,None,None,None,"Reg_Update")
     print("done")
     # Quits the driver
     driver.close()

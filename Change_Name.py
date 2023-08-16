@@ -6,6 +6,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 
 from Niid_Correction import correct_regNoNiid
+from Write_Logs import write_logs
+
 
 # Main Function
 
@@ -132,6 +134,12 @@ def change_name(policy_number, firstname, lastname,platform_data):
     print(Reg_number)
 
     time.sleep(0.5)
+    # Get the value of the firstname
+    value_text = driver.find_element(by="xpath",
+                                     value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[4]/div[1]/input')
+    old_firstname = value_text.get_attribute("value")
+    print(old_firstname)
+
     # Editing the First Name
     driver.find_element(by="xpath",
                         value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[4]/div[1]/input').clear()
@@ -139,6 +147,12 @@ def change_name(policy_number, firstname, lastname,platform_data):
                                     value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[4]/div[1]/input')
     namefirst.send_keys(first)
     time.sleep(0.5)
+
+    # Get the value of the Surname
+    value_text = driver.find_element(by="xpath",
+                                     value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[4]/div[2]/input')
+    old_lastname = value_text.get_attribute("value")
+    print(old_lastname)
 
     # Editing the SurName
     driver.find_element(by="xpath",
@@ -173,7 +187,12 @@ def change_name(policy_number, firstname, lastname,platform_data):
         if cssValue == 'none':
             print("done waiting")
 
-    print("done")
+    POLICY_NUMBER = policy
+    NEW_NAME = [f"First Name: {firstname}",f" Last Name: {lastname}"]
+    OLD_NAME = [f"First Name: {old_firstname}", f" Last Name: {old_lastname}"]
+
+    write_logs(POLICY_NUMBER,None,None,None,None,OLD_NAME,NEW_NAME,"name_update")
+    print("Done✅")
     # Quits the driver
     driver.close()
     driver.quit()

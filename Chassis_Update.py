@@ -6,6 +6,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 
 from Niid_Correction import correct_regNoNiid
+from Write_Logs import write_logs
 
 
 # Main Function
@@ -132,6 +133,12 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
     Reg_number = value_text.get_attribute("value")
     print(Reg_number)
 
+    # Getting the value of the chassis number
+    value_text = driver.find_element(by="xpath",
+                                     value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[8]/div[2]/input')
+    old_chassis_number = value_text.get_attribute("value")
+    print(old_chassis_number)
+
     # Editing the Chassis Number
     driver.find_element(by="xpath",
                         value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[8]/div[2]/input').clear()
@@ -165,6 +172,14 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
         if cssValue == 'none':
             print("Done Loading✅")
 
+    # Geting the policy details
+    POLICY_NUMBER = policy
+    NEW_CHASSIS_NUMBER = correct_chassisNo
+    OLD_CHASSIS_NUMBER = old_chassis_number
+
+    # calling the write log function to write the log files
+    write_logs(POLICY_NUMBER,None,None,NEW_CHASSIS_NUMBER,OLD_CHASSIS_NUMBER,None,None,"chassis_Update")
+    print("Done✅")
     # Quits the driver
     driver.close()
     driver.quit()

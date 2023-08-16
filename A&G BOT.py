@@ -1,5 +1,6 @@
 import logging
 import time
+import os
 import asyncio
 from typing import Dict
 
@@ -406,80 +407,89 @@ if __name__ == "__main__":
     Username = input("Username: ")
     Password = input("Passowrd: ")
 
-    while Username != "Joseph" and Password != "Aginsure":
+    while Username != "Joseph" or Password != "Aginsure":
+        print("invalid user")
+        Username = input("Username: ")
+        Password = input("Passowrd: ")
+
+    else:
+        #Clearing the console one the Authentication is complete
+        def clear_console():
+            os.system('cls' if os.name == 'nt' else 'clear')
+        clear_console()
+
         application = Application.builder().token(
             "6679542308:AAFwAJJ3wIj5LZ9fxjm_SPS07N8mpJlrVuw").read_timeout(500).write_timeout(500).build()
-    else:
-        print("invalid user")
+        job_queue = application.job_queue
+
+        # Add conversation handler with the states CHOOSING, REG_CHOICE, CHASISS_CHOICE, VERIFY_CHOICE
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler("start", start, block=False)],
+            states={
+                FIRST_CHOICE: [
+                    MessageHandler(filters.Regex(
+                        "^Scratch Card Platform$"), Platform_choice),
+                    MessageHandler(filters.Regex(
+                        "^E-PIN Platform$"), Platform_choice),
+                    MessageHandler(filters.Regex("^Cancel") |
+                                   filters.Regex("^Cancel"), cancel),
+                ],
+                CHOOSING: [
+                    MessageHandler(
+                        filters.Regex("^Reg Correction"), custom_choice),
+                    MessageHandler(filters.Regex(
+                        "^Reg and Chassis Correction$"), another_choice),
+                    MessageHandler(filters.Regex(
+                        "^Verify Policy$"), verify_choice),
+                    MessageHandler(filters.Regex(
+                        "^Chassis Correction"), chasis_choice),
+                    MessageHandler(filters.Regex("^Change Name"),
+                                   change_name_choice),
+                    MessageHandler(filters.Regex("^Cancel") |
+                                   filters.Regex("^Cancel"), cancel),
+
+                ],
+                REG_CHOICE: [
+                    MessageHandler(
+                        filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                            "^Cancel")), regular_choice
+                    )
+                ],
+                CHASIS_CHOICE: [
+                    MessageHandler(
+                        filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                            "^Cancel")), reg_and_chassis_choice
+                    )
+                ],
+                VERIFY_CHOICE: [
+                    MessageHandler(
+                        filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                            "^Cancel")), verify_policies
+                    )
+                ],
+                CHASSIS_ONLY_CHOICE: [
+                    MessageHandler(
+                        filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                            "^Cancel")), chassis_OnlyChoice
+                    )
+                ],
+                NAME_CHOICE: [
+                    MessageHandler(
+                        filters.TEXT & ~(filters.COMMAND |
+                                         filters.Regex("^Cancel")), changeName
+                    )
+                ],
+            },
+            fallbacks=[MessageHandler(filters.Regex("^Cancel"), cancel)],
+        )
+
+        application.add_error_handler(error)
+
+        application.add_handler(conv_handler)
+
+        # Run the bot until the user presses Ctrl-C
+        application.run_polling(allowed_updates=Update.ALL_TYPES)
     # Create the Application and pass it your bot's token.
 
 
-    job_queue = application.job_queue
 
-    # Add conversation handler with the states CHOOSING, REG_CHOICE, CHASISS_CHOICE, VERIFY_CHOICE
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("start", start, block=False)],
-        states={
-            FIRST_CHOICE: [
-                MessageHandler(filters.Regex(
-                    "^Scratch Card Platform$"), Platform_choice),
-                MessageHandler(filters.Regex(
-                    "^E-PIN Platform$"), Platform_choice),
-                MessageHandler(filters.Regex("^Cancel") |
-                               filters.Regex("^Cancel"), cancel),
-            ],
-            CHOOSING: [
-                MessageHandler(
-                    filters.Regex("^Reg Correction"), custom_choice),
-                MessageHandler(filters.Regex(
-                    "^Reg and Chassis Correction$"), another_choice),
-                MessageHandler(filters.Regex(
-                    "^Verify Policy$"), verify_choice),
-                MessageHandler(filters.Regex(
-                    "^Chassis Correction"), chasis_choice),
-                MessageHandler(filters.Regex("^Change Name"),
-                               change_name_choice),
-                MessageHandler(filters.Regex("^Cancel") |
-                               filters.Regex("^Cancel"), cancel),
-
-            ],
-            REG_CHOICE: [
-                MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
-                        "^Cancel")), regular_choice
-                )
-            ],
-            CHASIS_CHOICE: [
-                MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
-                        "^Cancel")), reg_and_chassis_choice
-                )
-            ],
-            VERIFY_CHOICE: [
-                MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
-                        "^Cancel")), verify_policies
-                )
-            ],
-            CHASSIS_ONLY_CHOICE: [
-                MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
-                        "^Cancel")), chassis_OnlyChoice
-                )
-            ],
-            NAME_CHOICE: [
-                MessageHandler(
-                    filters.TEXT & ~(filters.COMMAND |
-                                     filters.Regex("^Cancel")), changeName
-                )
-            ],
-        },
-        fallbacks=[MessageHandler(filters.Regex("^Cancel"), cancel)],
-    )
-
-    application.add_error_handler(error)
-
-    application.add_handler(conv_handler)
-
-    # Run the bot until the user presses Ctrl-C
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
