@@ -20,8 +20,8 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
     correct_chassisNo = chassis_number
 
     options = webdriver.ChromeOptions()
-    # options.add_argument("--headless")
-    options.add_argument("--start-maximized")
+    options.add_argument("--headless=new")
+    # options.add_argument("--start-maximized")
     options.add_argument('--log-level=3')
 
     # Provide the path of chromedriver present on your system.
@@ -32,7 +32,7 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
 
     # Send a get request to the url
     driver.get(platform_data[0])
-    time.sleep(0.5)
+    time.sleep(0.2)
     # https: // auth.geeksforgeeks.org /
 
     # Finds the input box by name in DOM tree to send both
@@ -46,29 +46,29 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
 
     # Find the signin button and click on it.
     driver.find_element(by="xpath", value='//div/input[3]').click()
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Find the Policy operations button and click on it.
     driver.find_element(
         by="xpath", value='//div[@class="menu-list"]/ul/ul/div[4]/div/li/a').click()
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Find the Update Policy button and click on it.
     driver.find_element(
         by="xpath", value='//div[@class="menu-list"]/ul/ul/div[4]/div[2]/ul/li[2]').click()
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Find the Search by option and click on it.
     driver.find_element(by="xpath",
                         value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
                               '3]/div/select').click()
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Find the fetch by policy button and click on it.
     driver.find_element(by="xpath",
                         value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
                               '3]/div/select/option[2]').click()
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Finds the input box by name in DOM tree to send
     # the provided Policy in it.
@@ -81,7 +81,7 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
     driver.find_element(by="xpath",
                         value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary '
                               'panel-heading"]/div/div[3]/input').click()
-    time.sleep(1.5)
+    time.sleep(1)
 
 
     # Checking if the screen is loading
@@ -93,7 +93,7 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
         cssValue = driver.find_element(
             by="xpath", value='//div[4]').value_of_css_property('display')
         print('Loading...')
-        time.sleep(1.5)
+        time.sleep(1.2)
         if cssValue == 'none':
             print("Done Loading✅")
 
@@ -146,20 +146,20 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
                                      value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div[8]/div[2]/input')
     chassis_No.send_keys(correct_chassisNo)
 
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Find the Save button and click on it.
     driver.find_element(by="xpath",
                         value='//div[@class="col-md-offset-3 col-md-8 center-block panel-primary panel-heading"]/div['
                               '14]/div/input').click()
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Find the Yes button and click on it.
     driver.find_element(by="xpath",
                         value='//div[@class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable '
                               'ui-resizable ui-dialog-buttons"]/div/div/button').click()
 
-    time.sleep(1.5)
+    time.sleep(1)
     cssValue = driver.find_element(
         by="xpath", value='//div[4]').value_of_css_property('display')
     print(cssValue)
@@ -168,7 +168,7 @@ def correct_chassisNO(policy_number, chassis_number,platform_data):
         cssValue = driver.find_element(
             by="xpath", value='//div[4]').value_of_css_property('display')
         print('Loading...')
-        time.sleep(1.5)
+        time.sleep(1.2)
         if cssValue == 'none':
             print("Done Loading✅")
 

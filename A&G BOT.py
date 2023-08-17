@@ -5,6 +5,8 @@ import asyncio
 from typing import Dict
 
 
+
+
 from telegram import __version__ as TG_VER
 
 from Change_Name import change_name
@@ -156,7 +158,7 @@ async def regular_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=chat_id, text=f'Sorry there might be a network error please try again', reply_markup=ReplyKeyboardRemove())
 
     application.add_error_handler(error)
-    job_queue.run_once(callback_30, 0.5)
+    job_queue.run_once(callback_30, 0.2)
     return ConversationHandler.END
 
 

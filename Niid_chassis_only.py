@@ -18,7 +18,8 @@ def correct_chassisNo_Niid(policy_number, reg_number, chassis_number):
     correct_chassisNo = chassis_number
 
     options = webdriver.ChromeOptions()
-    options.add_argument("--start-maximized")
+    options.add_argument("--headless=new")
+    # options.add_argument("--start-maximized")
     options.add_argument('--log-level=3')
 
     # Provide the path of chromedriver present on your system.
@@ -29,7 +30,7 @@ def correct_chassisNo_Niid(policy_number, reg_number, chassis_number):
 
     # Send a get request to the url
     driver.get('https://niid.org/default.aspx')
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Finds the input box by name in DOM tree to send both
     # the provided email and password in it.
@@ -39,25 +40,25 @@ def correct_chassisNo_Niid(policy_number, reg_number, chassis_number):
     keycode = driver.find_element(by="xpath",
                                   value='//input[@class="riTextBox riEnabled Textbox_Large"]')
     keycode.send_keys(password)
-    time.sleep(1.5)
+    time.sleep(0.8)
 
     # Find the Login button and click on it.
     driver.find_element(
         by="xpath", value='//div[@id="MainContent_UpdatePanel1"]/table/tbody/tr[7]/td/a/input').click()
-    time.sleep(1.5)
+    time.sleep(0.8)
 
     # Find the Request(Endorsements) link and click on it.
     driver.find_element(by="xpath", value='//form/table/tbody/tr[7]/td['
                                           '2]/div/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr/td/div/div/table'
                                           '/tbody/tr[2]/td[2]/div/div/table/tbody/tr[2]/td['
                                           '2]/table/tbody/tr/td/table/tbody/tr/td[2]/a').click()
-    time.sleep(1.5)
+    time.sleep(0.8)
 
     # Find the Motor Vehicle Endorsement link and click on it.
     driver.find_element(by="xpath", value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table'
                                           '/tbody/tr/td/div/div/table/tbody/tr[2]/td['
                                           '2]/div/div/table/tbody/tr/td/table/tbody/tr/td[3]/a').click()
-    time.sleep(1.5)
+    time.sleep(0.8)
 
     # Entering the Policy number
     policy_Number = driver.find_element(by="xpath",
@@ -65,20 +66,20 @@ def correct_chassisNo_Niid(policy_number, reg_number, chassis_number):
                                               '2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[4]/td['
                                               '2]/span/input')
     policy_Number.send_keys(policy)
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Entering the incorrect Reg number
     reg_No = driver.find_element(by="xpath",
                                  value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table'
                                        '/tbody/tr[5]/td[2]/span/input')
     reg_No.send_keys(correct_regNo)
-    time.sleep(1.5)
+    time.sleep(0.8)
 
     # Finding the search Button and clicking on it
     driver.find_element(by="xpath",
                         value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
                               '6]/td/span/input').click()
-    time.sleep(1.5)
+    time.sleep(0.8)
 
     # Identify the email text box
     email_txt = driver.find_element(by="xpath", value="//form/table/tbody/tr[7]/td["
@@ -101,18 +102,18 @@ def correct_chassisNo_Niid(policy_number, reg_number, chassis_number):
                                         value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table'
                                               '/tbody/tr[12]/td[2]/input')
         new_email.send_keys(comapny_email)
-        time.sleep(1.5)
+        time.sleep(0.8)
 
     # Editing the Chassis Number
     driver.find_element(by="xpath",
                         value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
                               '16]/td[2]/input').clear()
-    time.sleep(0.5)
+    time.sleep(0.2)
     driver.find_element(by="xpath",
                         value='//form/table/tbody/tr[7]/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr['
                               '16]/td[2]/input').send_keys(
         correct_chassisNo)
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     # Finding the change button and clicking on it
     driver.find_element(by="xpath",
@@ -123,8 +124,6 @@ def correct_chassisNo_Niid(policy_number, reg_number, chassis_number):
     # Checking for the alert and clicking on it
     alert = driver.switch_to.alert
     alert.accept()
-
-    time.sleep(1)
 
     # closing the Page
     driver.close()
