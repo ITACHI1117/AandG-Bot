@@ -1,12 +1,7 @@
 import logging
 import time
 import os
-import asyncio
-from typing import Dict
-
-
-
-
+from dotenv import load_dotenv
 from telegram import __version__ as TG_VER
 
 from Change_Name import change_name
@@ -39,17 +34,24 @@ from telegram.ext import (
     filters,
 )
 
+
+
 # Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
+
+
 # set higher logging level for httpx to avoid all GET and POST requests being logged
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
+
+
 FIRST_CHOICE, CHOOSING, REG_CHOICE, CHASIS_CHOICE, VERIFY_CHOICE, CHASSIS_ONLY_CHOICE, NAME_CHOICE = range(
     7)
+
 
 # Reply keyboards
 reply_keyboard = [
@@ -66,6 +68,19 @@ markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
 markup2 = ReplyKeyboardMarkup(reply_keyboard2, one_time_keyboard=True)
 
 
+
+# Loadinng and getting the enviromet variales
+load_dotenv()
+THIRD_PARTY_PLATFORM_LINK = os.getenv("3RD_PARTY_PLATFORM_LINK")
+THIRD_PARTY_PLATFORM_EMAIL = os.getenv("3RD_PARTY_PLATFORM_EMAIL")
+
+E_PIN_PARTY_PLATFORM_LINK = os.getenv('E_PIN_LINK')
+E_PIN_PARTY_PLATFORM_EMAIL = os.getenv('E_PIN_EMAIL')
+
+PLATFORMS_PASSWORD = os.getenv("PLATFORMS_PASSWORD")
+
+
+
 # Starts the converstaion with the bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start the conversation and ask user for input."""
@@ -79,8 +94,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 #Getting the Platform link from the choice the user will make when asked the pltform in which corrections will be made
 def getLink(PLATFORM_CHOICE):
-    Scratch_Card_Platform_Link = 'https://aginsuranceapplications.com/card/Index.aspx'
-    E_PIN_LINK = "https://aginsuranceapplications.com/"
+    Scratch_Card_Platform_Link = THIRD_PARTY_PLATFORM_LINK
+    E_PIN_LINK = E_PIN_PARTY_PLATFORM_LINK
     if PLATFORM_CHOICE == 'Scratch Card Platform':
         email = 'mayowa_admin'
         password = 'Gbohunmi17'
@@ -356,7 +371,6 @@ async def verify_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
     )
 
-
     return VERIFY_CHOICE
 
 # runs the correction for chassis number only
@@ -406,91 +420,82 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == "__main__":
     """Run the bot."""
 
-    Username = input("Username: ")
-    Password = input("Passowrd: ")
+    # #Clearing the console one the Authentication is complete
+    # def clear_console():
+    #     os.system('cls' if os.name == 'nt' else 'clear')
+    # clear_console()
 
-    while Username != "Joseph" or Password != "Aginsure":
-        print("invalid user")
-        Username = input("Username: ")
-        Password = input("Passowrd: ")
+    application = Application.builder().token(
+        "6679542308:AAFwAJJ3wIj5LZ9fxjm_SPS07N8mpJlrVuw").read_timeout(500).write_timeout(500).build()
+    job_queue = application.job_queue
 
-    else:
-        #Clearing the console one the Authentication is complete
-        def clear_console():
-            os.system('cls' if os.name == 'nt' else 'clear')
-        clear_console()
+    # Add conversation handler with the states CHOOSING, REG_CHOICE, CHASISS_CHOICE, VERIFY_CHOICE
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler("start", start, block=False)],
+        states={
+            FIRST_CHOICE: [
+                MessageHandler(filters.Regex(
+                    "^Scratch Card Platform$"), Platform_choice),
+                MessageHandler(filters.Regex(
+                    "^E-PIN Platform$"), Platform_choice),
+                MessageHandler(filters.Regex("^Cancel") |
+                                filters.Regex("^Cancel"), cancel),
+            ],
+            CHOOSING: [
+                MessageHandler(
+                    filters.Regex("^Reg Correction"), custom_choice),
+                MessageHandler(filters.Regex(
+                    "^Reg and Chassis Correction$"), another_choice),
+                MessageHandler(filters.Regex(
+                    "^Verify Policy$"), verify_choice),
+                MessageHandler(filters.Regex(
+                    "^Chassis Correction"), chasis_choice),
+                MessageHandler(filters.Regex("^Change Name"),
+                                change_name_choice),
+                MessageHandler(filters.Regex("^Cancel") |
+                                filters.Regex("^Cancel"), cancel),
 
-        application = Application.builder().token(
-            "6679542308:AAFwAJJ3wIj5LZ9fxjm_SPS07N8mpJlrVuw").read_timeout(500).write_timeout(500).build()
-        job_queue = application.job_queue
-
-        # Add conversation handler with the states CHOOSING, REG_CHOICE, CHASISS_CHOICE, VERIFY_CHOICE
-        conv_handler = ConversationHandler(
-            entry_points=[CommandHandler("start", start, block=False)],
-            states={
-                FIRST_CHOICE: [
-                    MessageHandler(filters.Regex(
-                        "^Scratch Card Platform$"), Platform_choice),
-                    MessageHandler(filters.Regex(
-                        "^E-PIN Platform$"), Platform_choice),
-                    MessageHandler(filters.Regex("^Cancel") |
-                                   filters.Regex("^Cancel"), cancel),
-                ],
-                CHOOSING: [
-                    MessageHandler(
-                        filters.Regex("^Reg Correction"), custom_choice),
-                    MessageHandler(filters.Regex(
-                        "^Reg and Chassis Correction$"), another_choice),
-                    MessageHandler(filters.Regex(
-                        "^Verify Policy$"), verify_choice),
-                    MessageHandler(filters.Regex(
-                        "^Chassis Correction"), chasis_choice),
-                    MessageHandler(filters.Regex("^Change Name"),
-                                   change_name_choice),
-                    MessageHandler(filters.Regex("^Cancel") |
-                                   filters.Regex("^Cancel"), cancel),
-
-                ],
-                REG_CHOICE: [
-                    MessageHandler(
-                        filters.TEXT & ~(filters.COMMAND | filters.Regex(
-                            "^Cancel")), regular_choice
-                    )
-                ],
-                CHASIS_CHOICE: [
-                    MessageHandler(
-                        filters.TEXT & ~(filters.COMMAND | filters.Regex(
-                            "^Cancel")), reg_and_chassis_choice
-                    )
-                ],
-                VERIFY_CHOICE: [
-                    MessageHandler(
-                        filters.TEXT & ~(filters.COMMAND | filters.Regex(
-                            "^Cancel")), verify_policies
-                    )
-                ],
-                CHASSIS_ONLY_CHOICE: [
-                    MessageHandler(
-                        filters.TEXT & ~(filters.COMMAND | filters.Regex(
-                            "^Cancel")), chassis_OnlyChoice
-                    )
-                ],
-                NAME_CHOICE: [
-                    MessageHandler(
-                        filters.TEXT & ~(filters.COMMAND |
+            ],
+            REG_CHOICE: [
+                MessageHandler(
+                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                        "^Cancel")), regular_choice
+                )
+            ],
+            CHASIS_CHOICE: [
+                MessageHandler(
+                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                        "^Cancel")), reg_and_chassis_choice
+                )
+            ],
+            VERIFY_CHOICE: [
+                MessageHandler(
+                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                        "^Cancel")), verify_policies
+                )
+            ],
+            CHASSIS_ONLY_CHOICE: [
+                MessageHandler(
+                    filters.TEXT & ~(filters.COMMAND | filters.Regex(
+                        "^Cancel")), chassis_OnlyChoice
+                )
+            ],
+            NAME_CHOICE: [
+                MessageHandler(
+                    filters.TEXT & ~(filters.COMMAND |
                                          filters.Regex("^Cancel")), changeName
-                    )
-                ],
-            },
-            fallbacks=[MessageHandler(filters.Regex("^Cancel"), cancel)],
-        )
+                )
+            ],
+        },
+        fallbacks=[MessageHandler(filters.Regex("^Cancel"), cancel)],
+    )
 
-        application.add_error_handler(error)
+    application.add_error_handler(error)
 
-        application.add_handler(conv_handler)
+    application.add_handler(conv_handler)
 
-        # Run the bot until the user presses Ctrl-C
-        application.run_polling(allowed_updates=Update.ALL_TYPES)
+    # Run the bot until the user presses Ctrl-C
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
     # Create the Application and pass it your bot's token.
 
 

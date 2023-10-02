@@ -1,15 +1,21 @@
 # Import the required modules
 from selenium import webdriver
 import time
+import os
+from dotenv import load_dotenv
 from selenium.webdriver.chrome.service import Service
 
 # Main Function
 
 
 def correct_chassisNo_Niid(policy_number, reg_number, chassis_number):
+    load_dotenv()
+    NIID_EMAIL = os.getenv("NIID_EMAIL")
+    NIID_PASSWORD = os.getenv("NIID_PASSWORD")
+    NIID_LINK = os.getenv("NIID_LINK")
     # Provide the email and password
-    email = 'mayowaa'
-    password = 'Lovely1'
+    email = NIID_EMAIL
+    password = NIID_PASSWORD
     comapny_email = 'info@aginsuranceplc.com'
 
     # Provide policy number
@@ -26,10 +32,10 @@ def correct_chassisNo_Niid(policy_number, reg_number, chassis_number):
     path = (r"chromedriver.exe")
     service = Service(executable_path=path)
     driver = webdriver.Chrome(options=options, service=service)
-    # driver.set_window_size(1920, 1080)
+    driver.set_window_size(1024, 800)
 
     # Send a get request to the url
-    driver.get('https://niid.org/default.aspx')
+    driver.get(NIID_LINK)
     time.sleep(0.2)
 
     # Finds the input box by name in DOM tree to send both
