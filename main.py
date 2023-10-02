@@ -30,7 +30,7 @@ def correct_regNo(policy_number, reg_number,platform_data):
     path = (r"chromedriver.exe")
     service = Service(executable_path=path)
     driver = webdriver.Chrome(options=options, service=service)
-    # driver.set_window_size(1920, 1080)
+    driver.set_window_size(1024, 800)
 
     # Send a get request to the url
     driver.get(platform_data[0])
